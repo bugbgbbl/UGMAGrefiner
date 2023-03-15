@@ -1,11 +1,7 @@
-# under python 3 
+#!/usr/bin/env python3
 
 import argparse
-#import subprocess
-#from calendar import c
-#from hashlib import new
 import logging
-#from platform import node
 import time
 from Bio import SeqIO
 import re
@@ -13,16 +9,12 @@ from multiprocessing import Pool
 import psutil
 import os
 
-#from numpy import cov, real_if_close
-#from bidirectionalmap.bidirectionalmap import BidirectionalMap
 import sys
-#from collections import defaultdict
 from igraph import *
 import csv
 import itertools as it
 from typing import List, Dict
 from sklearn.mixture import GaussianMixture
-#from sklearn.cluster import DBSCAN
 import numpy as np
 
 ap = argparse.ArgumentParser(description="""UGMAGrefiner is a tool which 1) recruit unitigs to MAGs to improve compeleteness of MAGs which assembled by metaSPAdes and binning by existing binning tools, it is able to assign edges to multiple bins. 2) identify whether there are multiple genomes mixed in one MAG and get the unitigs of the different part of these genomes. 
@@ -39,43 +31,21 @@ ap.add_argument("--threshold", required=False, type=float, default=1.5, help="th
 ap.add_argument("--delimiter", required=False, type=str, default=",", help="delimiter for input/output results [default: , (comma)]")
 ap.add_argument("--nthreads", required=False, type=int, default=8, help="number of threads to use. [default: 8]")
 ap.add_argument("--gfaout", action="store_true", help="whether output gfa file for each MAG")
-#ap.add_argument("--trueContigSource", required=False, type=str, help="ture contig source used to calculate the accuracy of result")
 
 args = vars(ap.parse_args())
 
 edges_file = args["edges"]
-#edges_file="/home/xiangbaoyu/project/pwsT2D/7-assembly/metaspades/time2/assembly_graph.fastg"
 assembly_graph_file = args["graph"]
-#assembly_graph_file="/home/xiangbaoyu/project/pwsT2D/7-assembly/metaspades/time2/assembly_graph_after_simplification.gfa"
 contig_paths = args["paths"]
-#contig_paths="/home/xiangbaoyu/project/pwsT2D/7-assembly/metaspades/time2/contigs.paths"
 contig_bins_file = args["binned"]
-#contig_bins_file="/home/xiangbaoyu/project/pwsT2D/21-minerefine/bininput/time2_refine.csv"
 output_path = args["output"]
-#output_path="./"
 prefix = args["prefix"]
-#prefix="test"
 depth = args["depth"]
-#depth=6
 threshold = args["threshold"]
-#threshold=1.5
 delimiter = args["delimiter"]
-#delimiter=","
 nthreads = args["nthreads"]
-#nthreads=8
-#true_contigSource = args["trueContigSource"]
 gfaout = args["gfaout"]
 
-# edges_file="/home/xiangbaoyu/project/pwsT2D/28-GD02/1-metaspades/ERR1753684/assembly_graph.fastg"
-# assembly_graph_file="/home/xiangbaoyu/project/pwsT2D/28-GD02/1-metaspades/ERR1753684/assembly_graph_after_simplification.gfa"
-# contig_paths="/home/xiangbaoyu/project/pwsT2D/28-GD02/1-metaspades/ERR1753684/contigs.paths"
-# contig_bins_file="/home/xiangbaoyu/project/pwsT2D/28-GD02/3-minerefine/test/ERR1753684_initial_contig_bins.csv"
-# output_path="./"
-# prefix="test"
-# depth=6
-# threshold=1.5
-# delimiter=","
-# nthreads=16
 
 # Setup timer and mem
 start_time = time.time()
@@ -176,8 +146,6 @@ def get_cotigs_info(contig_paths:str):
     paths = {}
     #record edge's source
     edge_contigs = {}
-    #contigs' name
-    #contig_names = {}
 
     current_contig_num = ""
 
@@ -210,7 +178,6 @@ def get_cotigs_info(contig_paths:str):
                     contig_lengths[contig_num] = length
                     contig_coverages[contig_num] = coverage
 
-                    #contig_names[contig_num] = name.strip()
                     current_contig_num = contig_num
                 #record the contig's path
                 if contig_num not in paths:
@@ -249,7 +216,6 @@ def construct_assembly_graph(assembly_graph_file:str,edge_name:Dict[str,str]):
     edge_node = {}
     node_edge = {}
     #try:
-        # Get links from assembly_graph_with_scaffolds.gfa
        
     # Create graph
     assembly_graph = Graph()
@@ -358,9 +324,9 @@ def get_bininput(contig_bins_file: str, paths: Dict[str, List[str]], contig_cove
                 bins_contigs_lengthcoverage[bin] += contig_lengths[contig] * contig_coverages[contig]
             bins_average_coverage[bin] = bins_contigs_lengthcoverage[bin] / bins_contigs_len_sum[bin]
         return [n_bins, bins_contigs, bins_edges,edges_bin_coverage,bins_average_coverage]
-        
+    
     except:
-        logger.error("Please make sure that the correct path to the binning result file is provided and it is having the correct format")
+        logger.error("Please make sure that the correct path to the binning result file is provided and it is in the correct format")
         logger.info("Exiting UGMAGrefiner... Bye...!")
         sys.exit(1)    
     
@@ -430,7 +396,6 @@ def runBFS(edge:str, node: int, edge_coverages: Dict[str,float], edges_bin_cover
                 depth[active_node], bins_average_coverage[i] / edge_coverages[node_edge[node//2]]))
 
         #for node not binned, search its neighbor from its other side
-        # elif((len(visited) == 1) or (len(assembly_graph.neighbors(active_node, mode="ALL")) == 1 and edge_coverages[active_edge] < 1.5*edge_coverages[edge]) or (edge_lengths[active_edge]< 150 and edge_coverages[active_edge] > edge_coverages[edge])):
         elif((len(visited) == 1) or (len(assembly_graph.neighbors(active_node, mode="ALL")) == 1 )):
             is_end=int(active_node)%2
             if(is_end==1):
@@ -799,8 +764,6 @@ def dogmm(new_add_edges:Dict[int,List[str]]):
             gmm = GaussianMixture(n_components=n_to_gmm)
             gmm_model = gmm.fit(to_gmm_array) 
             gmm_predict = gmm.predict(to_gmm_array)
-            # for i in range(len(gmm.means_)):
-            #     gmm_out_file.write("gmmmean:%d,%d,%f\n" %(bin+1,i,gmm.means_[i][0]))
 
             merge_cluster = {} #Dict[newcluster:oldcluster]
             for i in range(len(gmm_predict)):
