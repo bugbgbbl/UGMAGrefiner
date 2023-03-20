@@ -31,14 +31,13 @@ git clone https://github.com/bugbgbbl/UGMAGrefiner.git
 ### Use prepResult.py to prepare binning result
 After we got the binning result we have to summary it in a csv file with the first column represent the name of contig and the second column represent the index of bins. Here we use the [prepResult.py](https://github.com/metagentools/GraphBin2/blob/master/support/prepResult.py) from [GraphBin2](https://github.com/metagentools/GraphBin2) to generate it.
 ```
-python prepResult.py     --binned /path/to/folder_with_binning_result \
+prepResult.py     --binned /path/to/folder_with_binning_result \
                          --output /path/to/output_folder
 ```
 
 ### Use UGMAGrefiner
 ```
-python UGMAGrefiner -h  
-usage: minerefine_SPAdes.py [-h] --edges EDGES --graph GRAPH --paths PATHS  
+usage: UGMAGrefiner.py [-h] --edges EDGES --graph GRAPH --paths PATHS  
                             --binned BINNED --output OUTPUT [--prefix PREFIX]  
                             [--depth DEPTH] [--threshold THRESHOLD]  
                             [--delimiter DELIMITER] [--nthreads NTHREADS]  
