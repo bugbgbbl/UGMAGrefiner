@@ -70,4 +70,4 @@ prefix_UGMAGrefiner.log: log
 prefix_UGMAGrefienr_output.csv: contain newly add unitigs for each MAG  
 
 ## Citation
-To be announced 
+Unitig level assembly Graph based Metagenome-assembled Genome refiner (UGMAGrefiner): a tool to increase completeness and resolution of metagenome-assembled genomes, https://doi.org/10.1016/j.csbj.2023.03.030
