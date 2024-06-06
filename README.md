@@ -13,7 +13,7 @@ Unitig level assembly Graph based Metagenome-assembled Genome refiner (UGMAGrefi
 You can install UGMAGrefienr using [conda](https://www.anaconda.com/)
 ```shell
 # create conda envronment and install UGMAGrefiner
-conda create -n ugmagrefienr -c bugbgbbl ugmagrefiner
+conda create -n ugmagrefiner -c bugbgbbl ugmagrefiner
 
 #activate ugmagrefiner environment
 conda activate ugmagrefiner
